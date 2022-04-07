@@ -103,7 +103,7 @@ public class Admin {
     System.out.print("Type in the Source Data Folder Path:");
     Scanner srcDataPathScanner = new Scanner(System.in);
     String srcDataPath = srcDataPathScanner.nextLine();
-    String rootDir = "/uac/cprj/db030/bin/java_test/";
+    String rootDir = "/uac/cprj/db062/desktop/csci-3170/sample_data";
     //this rootDir is specific to db030, need to be changed
     String Dir = rootDir + srcDataPath;
 
