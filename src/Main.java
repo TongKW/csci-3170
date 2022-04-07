@@ -9,7 +9,7 @@ class Main {
     main_menu();
   }
 
-  private static void main_menu() {
+  private static void main_menu() throws IOException {
     Scanner sc = new Scanner(System.in);
     System.out.println("\nWelcome to Car Renting System:\n");
     System.out.println("----- Main Menu -----");
@@ -38,7 +38,7 @@ class Main {
     main_menu();
   }
 
-  private static void admin_menu() {
+  private static void admin_menu() throws IOException {
     Scanner sc = new Scanner(System.in);
     System.out.println("\n-----Operaions for Administrator Menu-----\n");
     System.out.println("1. Create all tables");
@@ -56,7 +56,7 @@ class Main {
       } else if (ops == 2) {
 	admin.delete_tables();
       } else if (ops == 3) {
-	admin.load_data();
+	admin.load_datasets();
       } else if (ops == 4) {
 	admin.show_records();
       } else if (ops == 5) {
