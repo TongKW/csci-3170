@@ -1,6 +1,10 @@
 package menu;
 
 import java.sql.*;
+import java.util.*;
+import java.nio.charset.*;
+import java.nio.file.*;
+import java.io.*;
 import jdbc.Util;
 
 // Admin menu interface
@@ -94,4 +98,96 @@ public class Admin {
     }
     return;
   }
-}                     
+
+  public static void load_datasets() {
+    System.out.print("Type in the Source Data Folder Path:");
+    Scanner srcDataPathScanner = new Scanner(System.in);
+    String srcDataPath = srcDataPathScanner.nextLine();
+    String rootDir = "/uac/cprj/db030/bin/java_test/";
+    //this rootDir is specific to db030, need to be changed
+    String Dir = rootDir + srcDataPath;
+
+    //for debug
+    //System.out.println("your input data source is " + srcDataPath + " \n and this folder contains \n");
+    //File folder = new File(rootDir + srcDataPath);
+    //for (File f : folder.listFiles()){System.out.println(f.getName());}
+
+    String carFilePath = Dir + "/car.txt";
+    String carCatorgoryFilePath = Dir + "/car_category.txt";
+    String userFilePath = Dir + "/user.txt";
+    String userCategoryFilePath = Dir + "/user_category.txt";
+    String rentFilePath = Dir + "/rent.txt";
+
+    List carList = readUsingFileReader(carFilePath);
+    List carCatList = readUsingFileReader(carCatorgoryFilePath);
+    List userList = readUsingFileReader(userFilePath);
+    List userCatList = readUsingFileReader(userCategoryFilePath);
+    List rentList = readUsingFileReader(rentFilePath);
+
+    //for debug
+    //System.out.println(carList.size());
+    //System.out.println(carCatList.get(1));
+    //System.out.println(rentList.get(1));
+
+    System.out.println(generateStmt(carList,1));
+    System.out.println(generateStmt(carCatList,2));
+    System.out.println(generateStmt(userList,3));
+    System.out.println(generateStmt(userCatList,4));
+    System.out.println(generateStmt(rentList,5));
+    return;
+  }
+
+  private static List readUsingFileReader(String fileName) {
+    try {
+      File file = new File(fileName);
+      List<String> lines = new ArrayList<String>();
+      FileReader fr = new FileReader(file);
+      BufferedReader br = new BufferedReader(fr);
+      String line;
+      while((line = br.readLine()) != null){
+        lines.add(line);
+      }
+      br.close();
+      fr.close();
+      return lines;
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+      return Collections.emptyList();
+    }
+  }
+
+  private static String generateStmt(List list,int listType){
+    String Stmt = "\nINSERT INTO ";
+    switch(listType){
+        case 1:
+            Stmt += "\n     car(callum, name, manufacture, time_rent, ccid) \nVALUES";
+            break;
+        case 2:
+            Stmt += "\n     car_category(ccid,ccname) \nVALUES";
+            break;
+        case 3:
+            Stmt += "\n     user(uid, name, age, occupation, ucid) \nVALUES";
+            break;
+        case 4:
+            Stmt += "\n     user_category(ucid, max, ucid) \nVALUES";
+            break;
+        case 5:
+            Stmt += "\n     rent(callnum, copynum, uid, checkout, return_data) \nVALUES";
+            break;
+    }
+    for (int i = 0; i < list.size(); i++){
+        String tmpString = String.valueOf(list.get(i));
+        tmpString = tmpString.replaceAll("\\s+","','");
+        tmpString = "\n     ('" + tmpString;
+        if(i == list.size() - 1){
+            tmpString = tmpString + "');";
+        }else{
+            tmpString = tmpString + "'),";
+        }
+        Stmt = Stmt + tmpString;
+    }
+    return Stmt;
+  }
+}

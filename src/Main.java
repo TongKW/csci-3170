@@ -56,7 +56,7 @@ class Main {
       } else if (ops == 2) {
 	admin.delete_tables();
       } else if (ops == 3) {
-	//admin.load_data();
+	admin.load_datasets();
       } else if (ops == 4) {
 	//admin.show_records();
       } else if (ops == 5) {
