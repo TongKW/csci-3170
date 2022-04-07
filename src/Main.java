@@ -56,9 +56,9 @@ class Main {
       } else if (ops == 2) {
 	admin.delete_tables();
       } else if (ops == 3) {
-	admin.load_data();
+	//admin.load_data();
       } else if (ops == 4) {
-	admin.show_records();
+	//admin.show_records();
       } else if (ops == 5) {
         main_menu();
 	return;

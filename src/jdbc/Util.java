@@ -8,7 +8,7 @@ public class Util {
   private static String dbUsername = "Group16";
   private static String dbPassword = "gp16as#Pm";
 
-  public Connection get_conn() {
+  public static Connection get_conn() {
     // Get connection
     Connection conn = null;
     try {
