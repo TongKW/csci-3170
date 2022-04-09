@@ -21,7 +21,7 @@ public class Admin {
     + "ucid TINYINT UNSIGNED NOT NULL,"
     + "uname VARCHAR(25) NOT NULL,"
     + "age TINYINT UNSIGNED NOT NULL,"
-    + "cooupation VARCHAR(20) NOT NULL,"
+    + "occupation VARCHAR(20) NOT NULL,"
     + "PRIMARY KEY(uid),"
     + "FOREIGN KEY (ucid) REFERENCES user_category(ucid));";
   private static final String CREATE_CAR_CATEGORY_SQL = "CREATE TABLE IF NOT EXISTS car_category ("
@@ -74,9 +74,7 @@ public class Admin {
       stmt.executeUpdate(CREATE_PRODUCE_SQL);
       System.out.println("Done. Database is initialized.");
       return;
-    }
-    catch (SQLException e)
-    {
+    } catch (SQLException e) {
       e.printStackTrace();
     }
     return;
@@ -91,9 +89,7 @@ public class Admin {
       stmt.executeUpdate("SET foreign_key_checks = 1;");
       System.out.println("Done. Database is removed.");
       return;
-    }
-    catch (SQLException e)
-    {
+    } catch (SQLException e) {
       e.printStackTrace();
     }
     return;
@@ -102,10 +98,7 @@ public class Admin {
   public static void load_datasets() {
     System.out.print("Type in the Source Data Folder Path:");
     Scanner srcDataPathScanner = new Scanner(System.in);
-    String srcDataPath = srcDataPathScanner.nextLine();
-    String rootDir = "/uac/cprj/db062/desktop/csci-3170/sample_data";
-    //this rootDir is specific to db030, need to be changed
-    String Dir = rootDir + srcDataPath;
+    String Dir = srcDataPathScanner.nextLine();
 
     //for debug
     //System.out.println("your input data source is " + srcDataPath + " \n and this folder contains \n");
@@ -129,11 +122,13 @@ public class Admin {
     //System.out.println(carCatList.get(1));
     //System.out.println(rentList.get(1));
 
-    System.out.println(generateStmt(carList,1));
-    System.out.println(generateStmt(carCatList,2));
-    System.out.println(generateStmt(userList,3));
-    System.out.println(generateStmt(userCatList,4));
-    System.out.println(generateStmt(rentList,5));
+    generateStmt(carCatList,2);
+    generateStmt(userCatList,4);
+    generateStmt(carList,1);
+    generateStmt(userList,3);
+    generateStmt(rentList,5);
+    generateStmt(carList,6);
+    generateStmt(carList,7);
     return;
   }
 
@@ -150,44 +145,109 @@ public class Admin {
       br.close();
       fr.close();
       return lines;
-    }
-    catch (IOException e)
-    {
+    } catch (IOException e) {
       e.printStackTrace();
       return Collections.emptyList();
     }
   }
 
-  private static String generateStmt(List list,int listType){
-    String Stmt = "\nINSERT INTO ";
-    switch(listType){
-        case 1:
-            Stmt += "\n     car(callum, name, manufacture, time_rent, ccid) \nVALUES";
-            break;
-        case 2:
-            Stmt += "\n     car_category(ccid,ccname) \nVALUES";
-            break;
-        case 3:
-            Stmt += "\n     user(uid, name, age, occupation, ucid) \nVALUES";
-            break;
-        case 4:
-            Stmt += "\n     user_category(ucid, max, ucid) \nVALUES";
-            break;
-        case 5:
-            Stmt += "\n     rent(callnum, copynum, uid, checkout, return_data) \nVALUES";
-            break;
-    }
-    for (int i = 0; i < list.size(); i++){
+  private static void generateStmt(List list,int listType) {
+    try {
+      Statement stmt = conn.createStatement();
+      for (int i = 0; i < list.size(); i++) {
         String tmpString = String.valueOf(list.get(i));
-        tmpString = tmpString.replaceAll("\\s+","','");
-        tmpString = "\n     ('" + tmpString;
-        if(i == list.size() - 1){
-            tmpString = tmpString + "');";
-        }else{
-            tmpString = tmpString + "'),";
-        }
-        Stmt = Stmt + tmpString;
+        String[] values = tmpString.split("\t");
+	switch(listType) {
+          case 1: {
+	    String query = "INSERT INTO car(callnum, name, manufacture, time_rent, ccid) VALUES (?,?,?,?,?);";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
+	    if (!values[2].equals("NULL")) pstmt.setString(2, values[2]); else pstmt.setNull(2, Types.VARCHAR);
+	    if (!values[4].equals("NULL")) pstmt.setString(3, values[4]); else pstmt.setNull(3, Types.CHAR);
+	    if (!values[5].equals("NULL")) pstmt.setInt(4, Integer.parseInt(values[5])); else pstmt.setNull(4, Types.TINYINT);
+	    if (!values[6].equals("NULL")) pstmt.setInt(5, Integer.parseInt(values[6])); else pstmt.setNull(5, Types.TINYINT);
+            pstmt.executeUpdate();
+	    break;
+	  } case 2: {
+	    String query = "INSERT INTO car_category(ccid,ccname) VALUES (?,?);";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setInt(1, Integer.parseInt(values[0])); else pstmt.setNull(1, Types.TINYINT);
+	    if (!values[1].equals("NULL")) pstmt.setString(2, values[1]); else pstmt.setNull(2, Types.VARCHAR);
+            pstmt.executeUpdate();
+	    break;
+	  } case 3: {
+	    String query = "INSERT INTO user(uid, ucid, uname, age, occupation) VALUES (?,?,?,?,?);";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
+	    if (!values[4].equals("NULL")) pstmt.setInt(2, Integer.parseInt(values[4])); else pstmt.setNull(2, Types.TINYINT);
+	    if (!values[1].equals("NULL")) pstmt.setString(3, values[1]); else pstmt.setNull(3, Types.VARCHAR);
+	    if (!values[2].equals("NULL")) pstmt.setInt(4, Integer.parseInt(values[2])); else pstmt.setNull(4, Types.TINYINT);
+	    if (!values[3].equals("NULL")) pstmt.setString(5, values[3]); else pstmt.setNull(5, Types.VARCHAR);
+            pstmt.executeUpdate();
+	    break;
+	  } case 4: {
+	    String query = "INSERT INTO user_category(ucid, max, period) VALUES (?,?,?)";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setInt(1, Integer.parseInt(values[0])); else pstmt.setNull(1, Types.TINYINT);
+	    if (!values[1].equals("NULL")) pstmt.setInt(2, Integer.parseInt(values[1])); else pstmt.setNull(2, Types.TINYINT);
+	    if (!values[2].equals("NULL")) pstmt.setInt(3, Integer.parseInt(values[2])); else pstmt.setNull(3, Types.TINYINT);
+            pstmt.executeUpdate();
+	    break;
+	  } case 5: {
+	    String query = "INSERT INTO rent(callnum, copynum, uid, checkout, return_date) VALUES (?,?,?,?,?);";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
+	    if (!values[1].equals("NULL")) pstmt.setInt(2, Integer.parseInt(values[1])); else pstmt.setNull(2, Types.TINYINT);
+            if (!values[2].equals("NULL")) pstmt.setString(3, values[2]); else pstmt.setNull(3, Types.CHAR); 
+	    if (!values[3].equals("NULL")) pstmt.setString(4, values[3]); else pstmt.setNull(4, Types.CHAR);
+	    if (!values[4].equals("NULL")) pstmt.setString(5, values[4]); else pstmt.setNull(5, Types.CHAR);
+            pstmt.executeUpdate();
+	    break;
+	  } case 6: {
+	    String query = "INSERT INTO copy(callnum, copynum) VALUES (?,?);";
+	    PreparedStatement pstmt = conn.prepareStatement(query);
+	    if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
+	    if (!values[1].equals("NULL")) pstmt.setInt(2, Integer.parseInt(values[1])); else pstmt.setNull(2, Types.TINYINT);
+            pstmt.executeUpdate();
+            break;
+	  } case 7: {
+            String query = "INSERT INTO produce(callnum, cname) VALUES (?,?);";
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
+            if (!values[2].equals("NULL")) pstmt.setString(2, values[2]); else pstmt.setNull(2, Types.VARCHAR);
+	    pstmt.executeUpdate();
+            break;
+          }
+	}
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
     }
-    return Stmt;
+    return;
+  }
+
+  public static void show_all() {
+    show_one("car");
+    show_one("car_category");
+    show_one("user");
+    show_one("user_category");
+    show_one("rent");
+    show_one("copy");
+    show_one("produce");
+  }
+
+  private static void show_one(String table_name) {
+    try {
+      System.out.print(table_name + ": ");
+      { 
+	Statement stmt = conn.createStatement();
+        ResultSet r = stmt.executeQuery("SELECT COUNT(*) FROM " + table_name + ";");
+        r.next();
+        System.out.println(r.getInt(1));
+        r.close();
+      }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 }

@@ -29,6 +29,18 @@ javac ./Admin.java
 mv Admin.class ./menu
 rm -f ./Admin.java
 
+# Building for Manager.class
+cp ../src/menu/Manager.java ./
+javac ./Manager.java
+mv Manager.class ./menu
+rm -f ./Manager.java
+
+# Building for User.class
+cp ../src/menu/User.java ./
+javac ./User.java
+mv User.class ./menu
+rm -f ./User.java
+
 # Building for the Main program
 cp ../src/Main.java ./
 javac ./Main.java

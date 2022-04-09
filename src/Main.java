@@ -3,6 +3,8 @@ import java.sql.*;
 import jdbc.Util;
 import util.Font;
 import menu.Admin;
+import menu.Manager;
+import menu.User;
 
 class Main {
   public static void main(String[] args) {
@@ -58,7 +60,7 @@ class Main {
       } else if (ops == 3) {
 	admin.load_datasets();
       } else if (ops == 4) {
-	//admin.show_records();
+	admin.show_all();
       } else if (ops == 5) {
         main_menu();
 	return;
