@@ -214,7 +214,7 @@ public class Admin {
             String query = "INSERT INTO produce(callnum, cname) VALUES (?,?);";
             PreparedStatement pstmt = conn.prepareStatement(query);
             if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
-            if (!values[2].equals("NULL")) pstmt.setString(2, values[2]); else pstmt.setNull(2, Types.VARCHAR);
+            if (!values[3].equals("NULL")) pstmt.setString(2, values[3]); else pstmt.setNull(2, Types.VARCHAR);
 	    pstmt.executeUpdate();
             break;
           }
