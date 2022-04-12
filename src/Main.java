@@ -78,9 +78,12 @@ class Main {
     System.out.println("3. Return to the main menu");
     if (sc.hasNextInt()) {
       int ops = sc.nextInt();
+      User user = new User();
       // Valid inputs
       if (ops == 1) {
+        user.search_car();
       } else if (ops == 2) {
+        user.show_loan();
       } else if (ops == 3) {
         main_menu();
         return;
