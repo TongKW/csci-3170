@@ -45,8 +45,8 @@ public class Admin {
     + "uid CHAR(12) NOT NULL,"
     + "callnum CHAR(8) NOT NULL,"
     + "copynum TINYINT UNSIGNED NOT NULL,"
-    + "checkout CHAR(10) NOT NULL,"
-    + "return_date CHAR(10),"
+    + "checkout DATE NOT NULL,"
+    + "return_date DATE,"
     + "PRIMARY KEY (uid, callnum, copynum, checkout));";
   private static final String CREATE_PRODUCE_SQL = "CREATE TABLE IF NOT EXISTS produce ("
     + "cname VARCHAR(25) NOT NULL,"
@@ -199,8 +199,8 @@ public class Admin {
 	    if (!values[0].equals("NULL")) pstmt.setString(1, values[0]); else pstmt.setNull(1, Types.CHAR);
 	    if (!values[1].equals("NULL")) pstmt.setInt(2, Integer.parseInt(values[1])); else pstmt.setNull(2, Types.TINYINT);
             if (!values[2].equals("NULL")) pstmt.setString(3, values[2]); else pstmt.setNull(3, Types.CHAR); 
-	    if (!values[3].equals("NULL")) pstmt.setString(4, values[3]); else pstmt.setNull(4, Types.CHAR);
-	    if (!values[4].equals("NULL")) pstmt.setString(5, values[4]); else pstmt.setNull(5, Types.CHAR);
+	    if (!values[3].equals("NULL")) pstmt.setDate(4, java.sql.Date.valueOf(values[3])); else pstmt.setNull(4, Types.DATE);
+	    if (!values[4].equals("NULL")) pstmt.setDate(5, java.sql.Date.valueOf(values[4])); else pstmt.setNull(5, Types.DATE);
             pstmt.executeUpdate();
 	    break;
 	  } case 6: {
