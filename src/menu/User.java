@@ -112,11 +112,10 @@ public class User {
         int copynum = rs.getInt("copynum");
         String name = callnum_to_name(callnum);
         String cname = callnum_to_cname(callnum);
-        String checkout = rs.getString("checkout");
-        String return_date = rs.getString("return_date");
-        String return_check = return_check(return_date);
+        java.sql.Date checkout = rs.getDate("checkout");
+        java.sql.Date return_date = rs.getDate("return_date");
         System.out.println("|" + callnum + "|" + copynum + "|" + name +
-                           "|" + cname + "|" + checkout + "|" + return_check + "|");
+                           "|" + cname + "|" + checkout.toString() + "|" + return_date.toString() + "|");
       }
     } catch (SQLException e) {
         e.printStackTrace();
