@@ -102,10 +102,14 @@ class Main {
     System.out.print("Enter your choice: ");
     if (sc.hasNextInt()) {
       int ops = sc.nextInt();
+      Manager manager = new Manager();
       // Valid inputs
       if (ops == 1) {
+        manager.CarRenting();
       } else if (ops == 2) {
+        manager.CarReturning();
       } else if (ops == 3) {
+        //manager.list_all_unreturned_car_copies()
       } else if (ops == 4) {
         main_menu();
         return;
