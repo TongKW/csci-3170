@@ -109,7 +109,7 @@ class Main {
       } else if (ops == 2) {
         manager.CarReturning();
       } else if (ops == 3) {
-        //manager.list_all_unreturned_car_copies()
+        manager.list_all_unreturned_car_copies();
       } else if (ops == 4) {
         main_menu();
         return;
