@@ -15,6 +15,8 @@ import java.text.ParseException;
 
 public class Manager {
   private static Connection conn;
+
+
   public Manager() {
     Util jdbcUtil = new Util();
     conn = Util.get_conn();
@@ -34,19 +36,39 @@ public class Manager {
       return;
     }
 
+    // renting quota check, uid=>ucid=>max, than compare max and no. of unreturned car
+    int related_ucid = uid_to_ucid(Input_UserID);
+    int related_rent_quota = ucid_to_max(related_ucid );
+
+    int no_of_unreturned_car = Count_UnreturnedCar(Input_UserID);
+    
+    if (related_rent_quota == no_of_unreturned_car){
+      System.out.println("Quota is reached , no more renting is allowed !!");
+      return;
+    }
+
+
+    //System.out.println(" valid id");
+
     System.out.println(" Enter the Call Number:");
     String Input_CallNum = scannerM1.next();
     System.out.println(" Enter the Copy Number:");
     int Input_CopyNum = scannerM1.nextInt();
     
-    //check whether the car exists
-    stmt = conn.prepareStatement("SELECT * FROM copy WHERE callnum = ? AND copynum = ?");
+    //check copynum , max_no means maximun no of this car type 
+    stmt = conn.prepareStatement("SELECT * FROM copy WHERE callnum = ? ");
     stmt.setString(1, Input_CallNum);
-    stmt.setInt(2, Input_CopyNum);
-    if (!stmt.executeQuery().next()) {
-      System.out.println("Invalid input");
+    ResultSet rs = stmt.executeQuery();
+    int max_num = 0;
+    while (rs.next()) {
+      max_num = rs.getInt("copynum");
+    }
+    if ( Input_CopyNum >  max_num ) {
+      System.out.println("invalid input");
       return;
     }
+
+    // System.out.println(" valid CallNum , valid copyNum ");
 
     //check whether the car is rented
     stmt = conn.prepareStatement("SELECT * FROM rent WHERE callnum = ? AND copynum = ? AND return_date is NULL");
@@ -57,6 +79,11 @@ public class Manager {
       return;
     }
 
+    //System.out.println("The car is able to be rented");
+    //System.out.println(Input_CallNum );
+    //System.out.println(Input_CopyNum );
+    //System.out.println(Input_UserID);
+
     //add the new check out record
     stmt = conn.prepareStatement("INSERT INTO rent(callnum, copynum, uid, checkout, return_date) VALUES (?,?,?,?,NULL)");
     stmt.setString(1, Input_CallNum );
@@ -66,7 +93,7 @@ public class Manager {
     stmt.execute();
     System.out.println("car renting performed successfully.");
     } catch (SQLException e) {
-            System.out.println("[Error] .\n");
+            System.out.println("[Error] , can not insert new checkout record \n");
         }
   }
 
@@ -89,6 +116,7 @@ public class Manager {
     System.out.println(" Enter the Copy Number:");
     int Input_CopyNum = scannerM2.nextInt();
     
+    /*
     //check whether the car exists
     stmt = conn.prepareStatement("SELECT * FROM copy WHERE callnum = ? AND copynum = ?");
     stmt.setString(1, Input_CallNum);
@@ -97,6 +125,7 @@ public class Manager {
       System.out.println("Invalid input");
       return;
     }
+    */
 
     // check whether the car was rented by this user
     stmt = conn.prepareStatement("SELECT * FROM rent WHERE callnum = ? AND copynum = ? AND uid =? AND return_date is NULL");
@@ -141,7 +170,7 @@ public class Manager {
 
     System.out.println("|UID|CallNum|CopyNum|Checkout|");
     while ( rs.next() ){
-      System.out.println("|" + rs.getString("uid") + "|" + rs.getString("copynum") + "|" + rs.getString("callnum") + "|" +  rs.getString("checkout")+ "|");
+      System.out.println("|" + rs.getString("uid") + "|" + rs.getString("callnum") + "|" + rs.getInt("copynum") + "|" +  rs.getDate("checkout")+ "|");
     }
     
     System.out.println("End of Query\n");
@@ -166,5 +195,66 @@ public class Manager {
         return Udate;
   }
 
+  public static int uid_to_ucid(String uid){
+    int related_ucid = 0 ;
+    try{
+      PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user where uid=?");
+      stmt.setString(1, uid);
+      ResultSet rs1 = stmt.executeQuery();
+      while (rs1.next()) {
+      related_ucid= rs1.getInt("ucid");
+    }
+    }catch(SQLException e){
+      System.out.println("[Error] \n");
+    }
+    return related_ucid;
+  }
+
+  public static int ucid_to_max(int ucid){
+    int related_rent_quota = 0 ;
+    try{
+      PreparedStatement stmt = conn.prepareStatement("SELECT * FROM user_category where ucid=?");
+      stmt.setInt(1,ucid );
+      ResultSet rs2 = stmt.executeQuery();
+      while(rs2.next()){
+        related_rent_quota= rs2.getInt("Max");
+      }
+    }catch(SQLException e){
+      System.out.println("[Error] \n");
+    }
+    return related_rent_quota;
+  }
+
+  public static int Count_UnreturnedCar(String uid){
+    Date day = new Date();
+    int no_of_unreturned_car = 0 ;
+    try{
+      PreparedStatement stmt = conn.prepareStatement("SELECT * FROM rent where uid=?");
+      stmt.setString(1, uid);
+      ResultSet rs3 = stmt.executeQuery();
+      no_of_unreturned_car=0;
+      while(rs3.next()){
+        day=rs3.getDate("return_date");
+        if (day == null ){
+          no_of_unreturned_car++;
+        }
+      }
+    }catch(SQLException e){
+      System.out.println("[Error] \n");
+    }
+    return no_of_unreturned_car;
+  }
+
+
+
 
 }
+
+
+
+    
+    
+
+
+  
+  
