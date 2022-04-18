@@ -64,7 +64,7 @@ public class Manager {
       max_num = rs.getInt("copynum");
     }
     if ( Input_CopyNum >  max_num ) {
-      System.out.println("invalid input");
+      System.out.println("Maximum available copies of the car are only: " + max_num);   
       return;
     }
 
@@ -244,17 +244,4 @@ public class Manager {
     }
     return no_of_unreturned_car;
   }
-
-
-
-
-}
-
-
-
-    
-    
-
-
-  
-  
+}  

@@ -54,8 +54,9 @@ public class User {
         String ccname = ccid_to_ccname(ccid);
         String company = callnum_to_cname(callnum);
         int copynum = callnum_to_copynum(callnum);
+	int rented_copy = get_rent_copy(callnum);
         System.out.println("|" + callnum + "|" + name +
-                           "|" + ccname + "|" + company + "|" + copynum + "|");
+                           "|" + ccname + "|" + company + "|" + (copynum - rented_copy) + "|");
       }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -73,8 +74,9 @@ public class User {
         String ccname = ccid_to_ccname(ccid);
         String company = callnum_to_cname(callnum);
         int copynum = callnum_to_copynum(callnum);
+	int rented_copy = get_rent_copy(callnum);
         System.out.println("|" + callnum + "|" + name +
-                           "|" + ccname + "|" + company + "|" + copynum + "|");
+                           "|" + ccname + "|" + company + "|" + (copynum - rented_copy) + "|");
       }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -150,6 +152,19 @@ public class User {
         e.printStackTrace();
     }
     return copynum;
+  }
+
+  private static Integer get_rent_copy(String callnum) {
+    Integer copy = 0;
+    String query = "SELECT SUM(copynum) FROM rent WHERE (callnum = '" + callnum +"' AND return_date IS NULL);";
+    try (Statement stmt = conn.createStatement()) {
+      ResultSet rs = stmt.executeQuery(query);
+      rs.last();
+      copy = rs.getInt("SUM(copynum)");
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return copy;
   }
 
   private static String ccid_to_ccname(Integer ccid){ //ccname is type of vehicle, i.e truck
