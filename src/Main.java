@@ -76,6 +76,7 @@ class Main {
     System.out.println("1. Search for Cars");
     System.out.println("2. Show loan record of a user");
     System.out.println("3. Return to the main menu");
+    System.out.print("Enter your choice: ");
     if (sc.hasNextInt()) {
       int ops = sc.nextInt();
       User user = new User();
