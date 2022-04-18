@@ -146,7 +146,7 @@ public class Admin {
       fr.close();
       return lines;
     } catch (IOException e) {
-      e.printStackTrace();
+      System.out.println("Invalid data path.");
       return Collections.emptyList();
     }
   }

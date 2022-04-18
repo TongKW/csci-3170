@@ -18,12 +18,12 @@ public class User {
     System.out.println("1. call number");
     System.out.println("2. name");
     System.out.println("3. company");
-    System.out.println("Choose the search criterion:");
+    System.out.print("Choose the search criterion: ");
     Scanner scanner = new Scanner(System.in);
     Integer option = scanner.nextInt();
     switch (option) {
       case 1:
-        System.out.println("Type in the search keyword (call number):");
+        System.out.print("Type in the search keyword (call number): ");
         String callnum = scanner.next();
         System.out.println("|Call Num|Name|Car Category|Company|Available No. of Copy|");
         search_call_num(callnum);
@@ -114,8 +114,10 @@ public class User {
         String cname = callnum_to_cname(callnum);
         java.sql.Date checkout = rs.getDate("checkout");
         java.sql.Date return_date = rs.getDate("return_date");
+	String checkout_str = (checkout == null) ? "NULL" : checkout.toString();
+	String return_date_str = (return_date == null) ? "NULL" : return_date.toString();
         System.out.println("|" + callnum + "|" + copynum + "|" + name +
-                           "|" + cname + "|" + checkout.toString() + "|" + return_date.toString() + "|");
+                           "|" + cname + "|" + checkout_str + "|" + return_date_str + "|");
       }
     } catch (SQLException e) {
         e.printStackTrace();
